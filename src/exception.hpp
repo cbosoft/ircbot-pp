@@ -10,3 +10,9 @@ class Exception {
     Exception(std::string message);
     void print();
 };
+
+class TimeoutException: public Exception
+{
+  public:
+    TimeoutException(std::string message) : Exception(message) {}
+};
