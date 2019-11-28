@@ -13,4 +13,5 @@ class Robot {
     Robot(std::string nickname, std::string channel);
     void connect(int port, std::string address);
     void run();
+    void handle_input(std::string input);
 };
