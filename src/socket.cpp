@@ -60,8 +60,10 @@ std::string Socket::readline()
     n_read = read(this->fd, buf, 1);
     if (n_read != -1) {
       ch = buf[0];
-      rv_builder << ch;
-      rlen ++;
+      if (ch != '\n') {
+        rv_builder << ch;
+        rlen ++;
+      }
     }
   } while ((ch != '\n') && (seconds_passed < this->timeout));
 
