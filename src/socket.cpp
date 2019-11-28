@@ -70,8 +70,10 @@ std::string Socket::readline()
   if (rlen == 0) {
     throw TimeoutException("Read timed out");
   }
-  
-  return rv_builder.str();
+
+  std::string rv = rv_builder.str();
+  std::cout << "< " << rv << std::endl;
+  return rv;
 }
 
 
@@ -80,6 +82,7 @@ std::string Socket::readline()
 void Socket::write(std::string val)
 {
   send(fd, val.c_str(), val.length(), 0);
+  std::cout << "> " << val << std::endl;
 }
 
 
