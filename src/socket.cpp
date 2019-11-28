@@ -68,7 +68,7 @@ std::string Socket::readline()
   } while ((ch != '\n') && (seconds_passed < this->timeout));
 
   if (rlen == 0) {
-    throw Exception("Read timed out");
+    throw TimeoutException("Read timed out");
   }
   
   return rv_builder.str();
