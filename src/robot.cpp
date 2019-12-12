@@ -163,7 +163,11 @@ void Robot::handle_input(std::string input)
 
   if (m->body[0] == '!') {
 
-    // TODO: do something with command
+    for (auto command_ptr : this->commands) {
+      if (command_ptr->match(m)) {
+        this->maybe_send(command_ptr->execute());
+      }
+    }
 
   }
 
