@@ -4,9 +4,23 @@
 #include "socket.hpp"
 #include "exception.hpp"
 
-Robot::Robot(std::string nickname, std::string channel) {
+Robot::Robot(std::string nickname, std::string channel)
+{
   this->channel = channel;
   this->nickname = nickname;
+
+  // this->commands.push_back(new xyz_Command());
+}
+
+
+
+
+
+Robot::~Robot()
+{
+  for (auto command_ptr : this->commands) {
+    delete command_ptr;
+  }
 }
 
 

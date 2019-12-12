@@ -11,6 +11,7 @@ typedef struct _Message {
   std::string chan;
   std::string body;
 } Message;
+#include "command.hpp"
 
 class Robot {
   private:
@@ -19,6 +20,7 @@ class Robot {
     std::string channel;
     const std::regex is_message_regex = std::regex(":(.+)!(.+)@(.+) PRIVMSG #(.+) :\\s*(.+)");
     Message *parse_message(std::string input);
+    std::list<Command *> commands;
 
 
 
