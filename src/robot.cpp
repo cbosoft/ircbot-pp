@@ -78,10 +78,10 @@ void Robot::run()
       this->handle_input(received);
 
     }
-    catch (TimeoutException ex) {
+    catch (const TimeoutException& ex) {
       // ignore timeout stuff
     }
-    catch (Exception ex) {
+    catch (const Exception& ex) {
       // other exceptions: print but don't exit
       ex.print();
     }
