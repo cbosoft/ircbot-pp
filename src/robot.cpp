@@ -6,6 +6,7 @@
 #include "robot.hpp"
 #include "socket.hpp"
 #include "exception.hpp"
+#include "message.hpp"
 
 Robot::Robot(std::string nickname, std::string channel)
 {
@@ -86,6 +87,10 @@ void Robot::connect(int port, std::string address)
   }
 }
 
+
+
+
+
 void Robot::run()
 {
   while (true) {
@@ -106,12 +111,18 @@ void Robot::run()
   }
 }
 
+
+
+
+
+
+
 Message *Robot::parse_message(std::string input)
 {
   Message *rv = NULL;
 
   std::smatch m;
-  if (not std::regex_search(input, m, this->is_message_regex)) {
+  if ((not std::regex_search(input, m, this->is_message_with_tag_regex)) || (not std::regex_search(input, m, this->is_message_regex))) {
     return NULL;
   }
 
@@ -122,6 +133,13 @@ Message *Robot::parse_message(std::string input)
   rv->host = m[3];
   rv->chan = m[4];
   rv->body = m[5];
+
+  if (m.size() > 6) {
+    rv->tag = m[6];
+  }
+  else {
+    rv->tag = "";
+  }
 
   return rv;
 }
