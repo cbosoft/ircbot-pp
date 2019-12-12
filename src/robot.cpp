@@ -83,7 +83,7 @@ void Robot::run()
     }
     catch (const Exception& ex) {
       // other exceptions: print but don't exit
-      ex.print();
+      std::cout << ex.what() << std::endl;
     }
 
   }
