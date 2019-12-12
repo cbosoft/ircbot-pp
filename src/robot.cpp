@@ -29,24 +29,18 @@ void Robot::connect(int port, std::string address)
   std::cout << "Waiting for end of MOTD message indicating connection complete." << std::endl;
   while (true) {
 
-    try {
-      std::string received = this->socket.readline();
+    std::string received = this->socket.readline();
 
-      if (received.find(":End of /MOTD") != std::string::npos) {
-        break;
-      }
-      else if (received.find("ERROR") != std::string::npos) {
-        exit(1);
-      }
-      else if (received.find("PING") != std::string::npos) {
-        std::string pong = std::string(received);
-        pong.replace(1, 1, "O");
-        this->socket.write(pong);
-      }
+    if (received.find(":End of /MOTD") != std::string::npos) {
+      break;
     }
-    catch (TimeoutException ex) {
-      ex.print();
+    else if (received.find("ERROR") != std::string::npos) {
       exit(1);
+    }
+    else if (received.find("PING") != std::string::npos) {
+      std::string pong = std::string(received);
+      pong.replace(1, 1, "O");
+      this->socket.write(pong);
     }
 
   }
@@ -58,24 +52,18 @@ void Robot::connect(int port, std::string address)
   std::cout << "Joining channel #" << this->channel << std::endl;
   while (true) {
 
-    try {
-      std::string received = this->socket.readline();
+    std::string received = this->socket.readline();
 
-      if (received.find(":End of /NAMES") != std::string::npos) {
-        break;
-      }
-      else if (received.find("ERROR") != std::string::npos) {
-        exit(1);
-      }
-      else if (received.find("PING") != std::string::npos) {
-        std::string pong = std::string(received);
-        pong.replace(1, 1, "O");
-        this->socket.write(pong);
-      }
+    if (received.find(":End of /NAMES") != std::string::npos) {
+      break;
     }
-    catch (TimeoutException ex) {
-      ex.print();
+    else if (received.find("ERROR") != std::string::npos) {
       exit(1);
+    }
+    else if (received.find("PING") != std::string::npos) {
+      std::string pong = std::string(received);
+      pong.replace(1, 1, "O");
+      this->socket.write(pong);
     }
 
   }
