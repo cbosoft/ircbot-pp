@@ -1,13 +1,26 @@
 #pragma once
 #include <sstream>
+#include <regex>
 
 #include "socket.hpp"
+
+typedef struct _Message {
+  std::string nick;
+  std::string user;
+  std::string host;
+  std::string chan;
+  std::string body;
+} Message;
 
 class Robot {
   private:
     Socket socket;
     std::string nickname;
     std::string channel;
+    const std::regex is_message_regex = std::regex(":(.+)!(.+)@(.+) PRIVMSG #(.+) :\\s*(.+)");
+    Message *parse_message(std::string input);
+
+
 
   public:
     Robot(std::string nickname, std::string channel);

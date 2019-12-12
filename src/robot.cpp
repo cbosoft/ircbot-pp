@@ -89,7 +89,37 @@ void Robot::run()
   }
 }
 
+Message *Robot::parse_message(std::string input)
+{
+  Message *rv = NULL;
+
+  std::smatch m;
+  if (not std::regex_search(input, m, this->is_message_regex)) {
+    return NULL;
+  }
+
+  rv = new Message;
+
+  rv->nick = m[1];
+  rv->user = m[2];
+  rv->host = m[3];
+  rv->chan = m[4];
+  rv->body = m[5];
+
+  return rv;
+}
+
 void Robot::handle_input(std::string input)
 {
-  // TODO
+  Message *m = this->parse_message(input);
+  std::cout << "message: " << input << std::endl;
+  if (m == NULL)
+    return;
+
+  if (m->body[0] == '!') {
+
+    // TODO: do something with command
+
+  }
+  delete m;
 }
