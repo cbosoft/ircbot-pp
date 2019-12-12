@@ -1,18 +1,19 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include <exception>
 
 
-class Exception {
-  private:
-    std::string message;
+class Exception : public std::runtime_error {
   public:
-    Exception(std::string message);
-    void print();
+    Exception(std::string what) : std::runtime_error(what) {};
 };
 
-class TimeoutException: public Exception
-{
-  public:
-    TimeoutException(std::string message) : Exception(message) {}
+#define EXCEPTION(N) \
+class N: public Exception\
+{\
+  public:\
+    N(std::string message) : Exception(message) {}\
 };
+
+EXCEPTION(TimeoutException)

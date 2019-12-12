@@ -2,8 +2,7 @@ CXX = g++
 CFLAGS = -g -Wall -Wextra
 OBJ = \
 			obj/robot.o\
-			obj/socket.o\
-			obj/exception.o
+			obj/socket.o
 LINK = 
 
 obj/%.o: src/%.cpp
