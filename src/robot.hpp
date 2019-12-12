@@ -29,4 +29,6 @@ class Robot {
     void connect(int port, std::string address);
     void run();
     void handle_input(std::string input);
+    void maybe_send(std::string s);
+    void send_message(std::string s);
 };

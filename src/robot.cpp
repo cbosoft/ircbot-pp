@@ -195,6 +195,29 @@ void Robot::handle_input(std::string input)
 }
 
 
+void Robot::maybe_send(std::string s)
+{
+  // if zero length, don't do anything
+  if (s.size() == 0)
+    return;
+
+  // if message of substance: send
+  this->send_message(s);
+}
+
+
+
+
+void Robot::send_message(std::string s)
+{
+  this->log(s);
+
+  std::stringstream ss;
+  ss << "PRIVMSG " << this->channel << " " << s << std::endl;
+  this->socket.write(ss.str());
+}
+
+
 void Robot::log(std::string s)
 {
   std::stringstream ss;
