@@ -144,10 +144,20 @@ Message *Robot::parse_message(std::string input)
   return rv;
 }
 
+
+
+
+
+
 void Robot::handle_input(std::string input)
 {
+  this->log(input);
+
   Message *m = this->parse_message(input);
-  std::cout << "message: " << input << std::endl;
+
+  if (this->afk_log.find(m->nick) != this->afk_log.end())
+    this->afk_log.erase(m->nick);
+
   if (m == NULL)
     return;
 
@@ -156,6 +166,27 @@ void Robot::handle_input(std::string input)
     // TODO: do something with command
 
   }
+
+  if (m->tag.size() >= 1) {
+    std::smatch match;
+    if (std::regex_search(m->body, match, this->get_tag_regex)) {
+      if ( this->afk_log.find(match[1]) != this->afk_log.end() ) {
+        std::stringstream ss;
+        auto afk_since_and_why = afk_log[match[1]];
+        std::string reason = afk_since_and_why.first;
+        time_t raw_time = afk_since_and_why.second;
+        struct tm *timeinfo = std::localtime(&raw_time);
+        char buf[100];
+        strftime(buf, 99, "%c", timeinfo);
+        ss << "I'm sorry, " << m->nick << ", but " << match[1] << " has been AFK since " << buf;
+        if (reason.size() > 0)
+          ss << " because \"" << reason << "\"";
+        ss << ".";
+        this->send_message(ss.str());
+      }
+    }
+  }
+
   delete m;
 }
 
