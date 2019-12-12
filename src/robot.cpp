@@ -1,4 +1,7 @@
 #include <regex>
+#include <ctime>
+#include <ios>
+#include <fstream>
 
 #include "robot.hpp"
 #include "socket.hpp"
@@ -136,4 +139,18 @@ void Robot::handle_input(std::string input)
 
   }
   delete m;
+}
+
+
+void Robot::log(std::string s)
+{
+  std::stringstream ss;
+  time_t raw_time = std::time(NULL);
+  struct tm *timeinfo = std::localtime(&raw_time);
+  char buf[100];
+  strftime(buf, 99, "%Y-%m-%d.txt", timeinfo);
+  const char *home = getenv("HOME");
+  ss << home << "/.ircbot_log_" << buf;
+  std::ofstream log_stream(ss.str(), std::ios::app);
+  log_stream << s;
 }
