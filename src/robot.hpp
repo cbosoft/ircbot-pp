@@ -30,6 +30,7 @@ class Robot {
     void run();
     void handle_input(std::string input);
     void maybe_send(std::string s);
-    void send_message(std::string s);
+    void send_message(std::string message);
+    void send_message(std::string message, std::string to);
     void log(std::string s);
 };
