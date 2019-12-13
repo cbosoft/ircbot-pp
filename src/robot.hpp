@@ -8,6 +8,12 @@
 #include "command.hpp"
 #include "message.hpp"
 
+typedef struct _AFK_Info {
+  std::vector<std::string> missed_messages;
+  time_t since;
+  std::string reason;
+} AFK_Info;
+
 class Robot {
   private:
     Socket socket;
@@ -16,10 +22,15 @@ class Robot {
     const std::regex is_message_with_tag_regex = std::regex(":(.+)!(.+)@(.+) PRIVMSG #(.+) :\\s*(.+(@\\S+).+)");
     const std::regex is_message_regex = std::regex(":(.+)!(.+)@(.+) PRIVMSG #(.+) :\\s*(.+)");
     const std::regex get_tag_regex = std::regex("@(\\S+)");
+    const std::regex afk_command_regex = std::regex("!afk\\s*(.*)");
     Message *parse_message(std::string input);
     std::map<std::string, std::pair<std::string, time_t>> afk_log;
 
     std::list<Command *> commands;
+
+    void afk_check(Message *message);
+    bool maybe_set_afk(Message *message);
+    void register_missed_message(Message *message);
 
 
 
