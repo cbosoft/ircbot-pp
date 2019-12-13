@@ -4,6 +4,7 @@ OBJ = \
 			obj/robot.o\
 			obj/message.o\
 			obj/commands/ping.o\
+			obj/commands/restart.o\
 			obj/afk.o\
 			obj/log.o\
 			obj/parse.o\
