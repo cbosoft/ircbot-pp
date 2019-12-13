@@ -17,3 +17,4 @@ class N: public Exception\
 };
 
 EXCEPTION(TimeoutException)
+EXCEPTION(ServerException)

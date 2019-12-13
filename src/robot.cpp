@@ -105,7 +105,11 @@ void Robot::run()
     try {
       std::string received = socket.readline();
       this->handle_input(received);
-
+    }
+    catch (const ServerException& ex) {
+      // exit on server error
+      std::cout << ex.what() << std::endl;
+      exit(1);
     }
     catch (const TimeoutException& ex) {
       // ignore timeout stuff
@@ -126,9 +130,7 @@ void Robot::handle_input(std::string input)
   this->log(input);
 
   if (std::regex_match(input, this->error_regex)) {
-    std::stringstream ss;
-    ss << "Encountered error: " << input;
-    throw Exception(ss.str());
+    throw ServerException(input);
   }
 
   Message *message = this->parse_message(input);
