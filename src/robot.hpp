@@ -23,6 +23,7 @@ class Robot {
     const std::regex is_message_regex = std::regex(":(.+)!(.+)@(.+) PRIVMSG #(.+) :\\s*(.+)");
     const std::regex get_tag_regex = std::regex("@(\\S+)");
     const std::regex afk_command_regex = std::regex("!afk\\s*(.*)");
+    const std::regex error_regex = std::regex("ERROR.*");
     Message *parse_message(std::string input);
     std::map<std::string, AFK_Info *> afk_log;
 
