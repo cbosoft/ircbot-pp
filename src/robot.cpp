@@ -8,12 +8,20 @@
 #include "exception.hpp"
 #include "message.hpp"
 
+#include "commands/ping.hpp"
+
+
+
+
 Robot::Robot(std::string nickname, std::string channel)
 {
-  this->channel = channel;
+  std::stringstream ss;
+  ss << "#" << channel;
+  this->channel = ss.str();
   this->nickname = nickname;
 
   // this->commands.push_back(new xyz_Command());
+  this->commands.push_back(new Ping_Command());
 }
 
 
@@ -22,9 +30,9 @@ Robot::Robot(std::string nickname, std::string channel)
 
 Robot::~Robot()
 {
-  for (auto command_ptr : this->commands) {
-    delete command_ptr;
-  }
+  //for (auto command_ptr : this->commands) {
+  //  delete command_ptr;
+  //}
 }
 
 
@@ -64,7 +72,7 @@ void Robot::connect(int port, std::string address)
   }
 
   std::stringstream ss;
-  ss << "JOIN #" << this->channel << std::endl;
+  ss << "JOIN " << this->channel << std::endl;
   this->socket.write(ss.str());
 
   std::cout << "Joining channel #" << this->channel << std::endl;
@@ -86,7 +94,6 @@ void Robot::connect(int port, std::string address)
 
   }
 }
-
 
 
 
@@ -114,119 +121,30 @@ void Robot::run()
 
 
 
-
-
-
-Message *Robot::parse_message(std::string input)
-{
-  Message *rv = NULL;
-
-  std::smatch m;
-  if ((not std::regex_search(input, m, this->is_message_with_tag_regex)) || (not std::regex_search(input, m, this->is_message_regex))) {
-    return NULL;
-  }
-
-  rv = new Message;
-
-  rv->nick = m[1];
-  rv->user = m[2];
-  rv->host = m[3];
-  rv->chan = m[4];
-  rv->body = m[5];
-
-  if (m.size() > 6) {
-    rv->tag = m[6];
-  }
-  else {
-    rv->tag = "";
-  }
-
-  return rv;
-}
-
-
-
-
-
-
 void Robot::handle_input(std::string input)
 {
   this->log(input);
 
-  Message *m = this->parse_message(input);
-
-  if (this->afk_log.find(m->nick) != this->afk_log.end())
-    this->afk_log.erase(m->nick);
-
-  if (m == NULL)
-    return;
-
-  if (m->body[0] == '!') {
-
-    for (auto command_ptr : this->commands) {
-      if (command_ptr->match(m)) {
-        this->maybe_send(command_ptr->execute());
-      }
-    }
-
+  if (std::regex_match(input, this->error_regex)) {
+    std::stringstream ss;
+    ss << "Encountered error: " << input;
+    throw Exception(ss.str());
   }
 
-  if (m->tag.size() >= 1) {
-    std::smatch match;
-    if (std::regex_search(m->body, match, this->get_tag_regex)) {
-      if ( this->afk_log.find(match[1]) != this->afk_log.end() ) {
-        std::stringstream ss;
-        auto afk_since_and_why = afk_log[match[1]];
-        std::string reason = afk_since_and_why.first;
-        time_t raw_time = afk_since_and_why.second;
-        struct tm *timeinfo = std::localtime(&raw_time);
-        char buf[100];
-        strftime(buf, 99, "%c", timeinfo);
-        ss << "I'm sorry, " << m->nick << ", but " << match[1] << " has been AFK since " << buf;
-        if (reason.size() > 0)
-          ss << " because \"" << reason << "\"";
-        ss << ".";
-        this->send_message(ss.str());
+  Message *message = this->parse_message(input);
+
+  if (message == NULL)
+    return;
+
+  if (message->body[0] == '!') {
+    if (not this->maybe_set_afk(message)) {
+      for (auto command_ptr : this->commands) {
+        if (command_ptr->match(message)) {
+          this->maybe_send(command_ptr->execute());
+        }
       }
     }
   }
 
-  delete m;
-}
-
-
-void Robot::maybe_send(std::string s)
-{
-  // if zero length, don't do anything
-  if (s.size() == 0)
-    return;
-
-  // if message of substance: send
-  this->send_message(s);
-}
-
-
-
-
-void Robot::send_message(std::string s)
-{
-  this->log(s);
-
-  std::stringstream ss;
-  ss << "PRIVMSG " << this->channel << " " << s << std::endl;
-  this->socket.write(ss.str());
-}
-
-
-void Robot::log(std::string s)
-{
-  std::stringstream ss;
-  time_t raw_time = std::time(NULL);
-  struct tm *timeinfo = std::localtime(&raw_time);
-  char buf[100];
-  strftime(buf, 99, "%Y-%m-%d.txt", timeinfo);
-  const char *home = getenv("HOME");
-  ss << home << "/.ircbot_log_" << buf;
-  std::ofstream log_stream(ss.str(), std::ios::app);
-  log_stream << s;
+  delete message;
 }
