@@ -6,7 +6,7 @@ Message *Robot::parse_message(std::string input)
   Message *rv = NULL;
 
   std::smatch m;
-  if ((not std::regex_search(input, m, this->is_message_with_tag_regex)) && (not std::regex_search(input, m, this->is_message_regex))) {
+  if ((not std::regex_match(input, m, this->is_message_with_tag_regex)) && (not std::regex_match(input, m, this->is_message_regex))) {
     return NULL;
   }
 

@@ -60,16 +60,23 @@ std::string Socket::readline()
     n_read = read(this->fd, buf, 1);
     if (n_read != -1) {
       ch = buf[0];
-      if (ch != '\n') {
-        rv_builder << ch;
-        rlen ++;
-      }
-    }
-  } while ((ch != '\n') && (seconds_passed < this->timeout));
 
-  if (rlen == 0) {
+      if (ch == '\0')
+        return "";
+
+      if (ch == '\r')
+        break;
+
+      if ((rlen == 0) && ch == '\n')
+        continue;
+
+      rv_builder << ch;
+      rlen ++;
+    }
+  } while (seconds_passed < this->timeout);
+
+  if (seconds_passed >= this->timeout)
     throw TimeoutException("Read timed out");
-  }
 
   std::string rv = rv_builder.str();
   std::cout << "< " << rv << std::endl;
@@ -81,8 +88,11 @@ std::string Socket::readline()
 
 void Socket::write(std::string val)
 {
-  send(fd, val.c_str(), val.length(), 0);
-  std::cout << "> " << val << std::endl;
+  std::stringstream ss;
+  ss << val << '\n';
+  std::string s = ss.str();
+  send(fd, s.c_str(), s.length(), 0);
+  std::cout << "> " << val;
 }
 
 

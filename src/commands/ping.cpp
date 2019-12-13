@@ -7,5 +7,5 @@ std::string Ping_Command::execute()
 
 bool Ping_Command::match(Message *m)
 {
-  return std::regex_search(m->body, this->regex);
+  return std::regex_match(m->body, this->regex);
 }

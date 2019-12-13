@@ -33,7 +33,6 @@ void Robot::afk_check(Message *message)
 bool Robot::maybe_set_afk(Message *message)
 {
   std::smatch match;
-  std::cout << message->body << std::endl;
   if (std::regex_search(message->body, match, this->afk_command_regex)) {
     AFK_Info *afk_info = new AFK_Info;
     afk_info->reason = match[1];
@@ -56,7 +55,7 @@ void Robot::register_missed_message(Message *message)
 {
   if (message->tag.size() >= 1) {
     std::smatch match;
-    if (std::regex_search(message->body, match, this->get_tag_regex)) {
+    if (std::regex_match(message->body, match, this->get_tag_regex)) {
       if ( this->afk_log.find(match[1]) != this->afk_log.end() ) {
         std::stringstream ss;
         AFK_Info* afk_info = afk_log[match[1]];
