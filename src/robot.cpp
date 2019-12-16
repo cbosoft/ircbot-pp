@@ -139,8 +139,14 @@ void Robot::handle_input(std::string input)
 
   Message *message = this->parse_message(input);
 
-  if (message == NULL)
+  if (message == NULL) {
+    if (input.find("PING") != std::string::npos) {
+      std::string pong = std::string(input);
+      pong.replace(1, 1, "O");
+      this->socket.write(pong);
+    }
     return;
+  }
 
   if (message->body[0] == '!') {
     if (not this->maybe_set_afk(message)) {
