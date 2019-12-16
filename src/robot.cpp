@@ -10,6 +10,7 @@
 
 #include "commands/ping.hpp"
 #include "commands/restart.hpp"
+#include "commands/about.hpp"
 
 
 
@@ -24,6 +25,7 @@ Robot::Robot(std::string nickname, std::string channel)
   // this->commands.push_back(new xyz_Command());
   this->commands.push_back(new Ping_Command());
   this->commands.push_back(new Restart_Command());
+  this->commands.push_back(new About_Command());
 }
 
 

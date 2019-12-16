@@ -5,6 +5,7 @@ OBJ = \
 			obj/message.o\
 			obj/commands/ping.o\
 			obj/commands/restart.o\
+			obj/commands/about.o\
 			obj/afk.o\
 			obj/log.o\
 			obj/parse.o\
